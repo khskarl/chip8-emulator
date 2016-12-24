@@ -21,6 +21,7 @@ int main(int argc, char const *argv[]) {
 	delete gameBuffer;
 
 	while (Context::ShouldQuit() == false) {
+		Context::UpdateKeypad();
 		Context::HandleEvents();
 		Chip8::Cycle();
 

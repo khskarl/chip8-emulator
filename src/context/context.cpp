@@ -68,7 +68,7 @@ void Context::DestroyContext () {
 	SDL_Quit();
 }
 
-void Context::HandleEvents () {
+void Context::UpdateKeypad () {
 	const uint8_t *keys = SDL_GetKeyboardState(NULL);
 	keypad[0] = keys[SDL_SCANCODE_1];
 	keypad[1] = keys[SDL_SCANCODE_2];
@@ -86,7 +86,9 @@ void Context::HandleEvents () {
 	keypad[13] = keys[SDL_SCANCODE_X];
 	keypad[14] = keys[SDL_SCANCODE_C];
 	keypad[15] = keys[SDL_SCANCODE_V];
+}
 
+void Context::HandleEvents () {
 	SDL_Event event;
 
 	while (SDL_PollEvent(&event)) {
