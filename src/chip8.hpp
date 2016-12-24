@@ -4,13 +4,14 @@
 
 namespace Chip8
 {
+uint8_t* GetDisplayMemory();
+uint8_t* GetKeypadMemory();
+bool     GetDrawFlag();
+
 void Initialize ();
 void LoadGame (uint8_t* buffer, int size);
 void Cycle ();
 
-uint8_t* GetDisplayMemory();
-bool     GetDrawFlag();
 };
-
 
 #endif

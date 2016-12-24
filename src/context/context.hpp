@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 namespace Context {
+void SetKeymap (uint8_t* argKeypad);
 bool SetupContext ();
 void DestroyContext ();
 void HandleEvents ();

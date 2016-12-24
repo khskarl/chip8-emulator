@@ -63,6 +63,10 @@ uint8_t* Chip8::GetDisplayMemory () {
 	return display;
 }
 
+uint8_t* Chip8::GetKeypadMemory () {
+	return keypad;
+}
+
 bool Chip8::GetDrawFlag () {
 	return drawFlag;
 }
@@ -148,7 +152,7 @@ void (*opTable[16]) () = {
 
 void ExecuteOpcode () {
 	uint8_t hiByte = (opcode & 0xff00) >> 8;
-	uint8_t loByte =  opcode & 0x00ff;
+	// uint8_t loByte =  opcode & 0x00ff;
 
 	// printf("\n%04x %02x %02x ", pc - 2, hiByte, loByte);
 	opTable[hiByte >> 4]();
@@ -334,7 +338,7 @@ void opDspr () {
 			uint8_t bit = (pixel & (0x80 >> j));
 			if (bit != 0) {
 				if (display[x + j + (y + i) * 64] == 1)
-				V[0xf] = 1;
+					V[0xf] = 1;
 
 				display[x + j + (y + i) * 64] ^= 1;
 			}

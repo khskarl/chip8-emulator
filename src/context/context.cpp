@@ -9,6 +9,12 @@ static SDL_Texture *texture = nullptr;
 
 static bool shouldQuit = false;
 
+static uint8_t* keypad;
+
+void Context::SetKeymap (uint8_t* keypadMemory) {
+	keypad = keypadMemory;
+}
+
 bool Context::SetupContext () {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0){
 		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
@@ -63,13 +69,36 @@ void Context::DestroyContext () {
 }
 
 void Context::HandleEvents () {
+	const uint8_t *keys = SDL_GetKeyboardState(NULL);
+	keypad[0] = keys[SDL_SCANCODE_1];
+	keypad[1] = keys[SDL_SCANCODE_2];
+	keypad[2] = keys[SDL_SCANCODE_3];
+	keypad[3] = keys[SDL_SCANCODE_4];
+	keypad[4] = keys[SDL_SCANCODE_Q];
+	keypad[5] = keys[SDL_SCANCODE_W];
+	keypad[6] = keys[SDL_SCANCODE_E];
+	keypad[7] = keys[SDL_SCANCODE_R];
+	keypad[8] = keys[SDL_SCANCODE_A];
+	keypad[9] = keys[SDL_SCANCODE_S];
+	keypad[10] = keys[SDL_SCANCODE_D];
+	keypad[11] = keys[SDL_SCANCODE_F];
+	keypad[12] = keys[SDL_SCANCODE_Z];
+	keypad[13] = keys[SDL_SCANCODE_X];
+	keypad[14] = keys[SDL_SCANCODE_C];
+	keypad[15] = keys[SDL_SCANCODE_V];
+
 	SDL_Event event;
 
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT)
 			shouldQuit = true;
-		if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
-			shouldQuit = true;
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+				case SDLK_ESCAPE:
+				shouldQuit = true;
+				break;
+			}
+		}
 	}
 }
 
@@ -92,8 +121,6 @@ void Context::Draw (uint8_t displayBuffer[64 * 32]) {
 	SDL_RenderCopy(renderer, texture, NULL, NULL);
 
 	SDL_RenderPresent(renderer);
-	// HACK: Implement proper framerate control in main loop
-
 }
 
 void Context::Sleep (float ms) {

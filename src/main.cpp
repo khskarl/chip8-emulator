@@ -6,9 +6,10 @@
 #include "game_loader.hpp"
 
 int main(int argc, char const *argv[]) {
-	Context::SetupContext();
 
 	Chip8::Initialize();
+	Context::SetupContext();
+	Context::SetKeymap(Chip8::GetKeypadMemory());
 
 	uint8_t* gameBuffer = nullptr;
 	int gameBufferSize = 0;
