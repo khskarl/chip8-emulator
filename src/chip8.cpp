@@ -152,9 +152,9 @@ void (*opTable[16]) () = {
 
 void ExecuteOpcode () {
 	uint8_t hiByte = (opcode & 0xff00) >> 8;
-	// uint8_t loByte =  opcode & 0x00ff;
+	uint8_t loByte =  opcode & 0x00ff;
 
-	// printf("\n%04x %02x %02x ", pc - 2, hiByte, loByte);
+	printf("\n%04x %02x %02x ", pc - 2, hiByte, loByte);
 	opTable[hiByte >> 4]();
 }
 
@@ -203,22 +203,25 @@ void opCall () {
 	pc = opcode & 0x0fff;
 }
 
+/* 3XNN	Skip instruction if VX == NN */
 void opSkipEqVN () {
 	uint8_t x = (opcode & 0xf00) >> 8;
 	uint8_t n =  opcode & 0x0ff;
 
 	if (V[x] == n)
-	pc += 2;
+		pc += 2;
 }
 
+/* 4XNN	Skip instruction if VX != NN */
 void opSkipNeVN () {
 	uint8_t x = (opcode & 0xf00) >> 8;
 	uint8_t n =  opcode & 0x0ff;
 
 	if (V[x] != n)
-	pc += 2;
+		pc += 2;
 }
 
+/* 5XY0	Skip instruction if VX == VY */
 void opSkipEqVV () {
 	uint8_t x = (opcode & 0xf00) >> 8;
 	uint8_t y = (opcode & 0x0f0) >> 4;
@@ -281,15 +284,22 @@ void op8 () {
 		break;
 		/* 8XY6	Store the value of VY shifted right one bit in VX */
 		case 0x0006:
-		opNull();
+		V[x]   = V[y] >> 1;
+		V[0xf] = V[y] & 0x1;
 		break;
 		/* 8XY7	Set VX to the value of VY minus VX */
 		case 0x0007:
-		opNull();
+		if (V[y] - V[x] < 0)
+			V[0xf] = 1;
+		else
+			V[0xf] = 0;
+
+		V[x] = V[y] - V[x];
 		break;
 		/* 8XYE	Store the value of VY shifted left one bit in VX */
 		case 0x000E:
-		opNull();
+		V[x]   = V[y] << 1;
+		V[0xf] = V[y] & 0x80;
 		break;
 	}
 }
@@ -319,7 +329,7 @@ void opRand () {
 	uint8_t x = (opcode & 0x0f00) >> 8;
 	uint8_t n =  opcode & 0x00ff;
 
-	V[x] = n & (rand() % 256) ;
+	V[x] = n & (rand()) ;
 }
 
 /* DXYN Draw a sprite at position VX, VY with N bytes of sprite data starting at
