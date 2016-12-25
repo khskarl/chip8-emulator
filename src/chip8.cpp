@@ -55,6 +55,7 @@ uint8_t keypad[16];
 uint8_t display[64 * 32];
 
 bool drawFlag = false;
+bool waitKeyPressFlag = false;
 
 void FetchOpcode ();
 void ExecuteOpcode ();
@@ -106,7 +107,8 @@ void Chip8::LoadGame (uint8_t *buffer, int size) {
 }
 
 void Chip8::Cycle () {
-	drawFlag = 0;
+	drawFlag         = false;
+	waitKeyPressFlag = false;
 
 	FetchOpcode();
 	ExecuteOpcode();
@@ -160,7 +162,7 @@ void ExecuteOpcode () {
 
 void opNull ()
 {
-	printf("not yet implemented");
+	printf("\t%s", "not yet implemented");
 }
 
 /* 0... instructions */
@@ -378,7 +380,21 @@ void opF () {
 		break;
 		/* FX0A	Wait for a keypress and store the result in register VX */
 		case 0x000a:
-		opNull();
+		{
+			bool wasKeyPressed = false;
+			for (uint8_t i = 0; i < 16; i++) {
+				if (keypad[i] != 0) {
+					V[x] = i;
+					wasKeyPressed = true;
+					i = 16;
+				}
+			}
+
+			/* We step back 1 instruction so this instruction will be repeated */
+			if (wasKeyPressed == false) {
+				pc -= 2;
+			}
+		}
 		break;
 		/* FX15	Set the delay timer to the value of register VX */
 		case 0x0015:
@@ -390,7 +406,7 @@ void opF () {
 		break;
 		/* FX1E	Add the value stored in register VX to register I */
 		case 0x001e:
-		V[x] += I;
+		I += V[x];
 		break;
 		/* FX29	Set I to the memadd of the sprite corresponding to the hex digit in VX */
 		case 0x0029:
@@ -409,7 +425,7 @@ void opF () {
 		for (uint8_t i = 0; i <= x; i++) {
 			memory[I + i] = V[i];
 		}
-		I += x + 1;
+		I = I + x + 1;
 		break;
 		/* FX65	Fill V0 to VX with the values in memory starting at address I.
 		I is set to I + X + 1 after operation */
@@ -417,7 +433,10 @@ void opF () {
 		for (uint8_t i = 0; i <= x; i++) {
 			V[i] = memory[I + i];
 		}
-		I += x + 1;
+		I = I + x + 1;
+		break;
+		default:
+		opNull();
 		break;
 	}
 }
