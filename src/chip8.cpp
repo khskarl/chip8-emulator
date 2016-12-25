@@ -252,66 +252,58 @@ void op8 () {
 	uint8_t y = (opcode & 0x00f0) >> 4;
 	switch(opcode & 0x000f)
 	{
+		/* 8XY0	Store the value of register VY in register VX */
 		case 0x0000:
 		V[x] = V[y];
 		break;
+		/* 8XY1	Set VX to VX OR VY */
 		case 0x0001:
 		V[x] |= V[y];
 		break;
+		/* 8XY2	Set VX to VX AND VY */
 		case 0x0002:
 		V[x] &= V[y];
 		break;
+		/* 8XY3	Set VX to VX XOR VY */
 		case 0x0003:
 		V[x] ^= V[y];
 		break;
 		/* 8XY4	Add the value of VY to VX */
 		case 0x0004:
-		if (V[x] + V[y] > 255)
-			V[0xF] = 1;
-		else
-			V[0xF] = 0;
-
+		V[0xF] = (V[x] + V[y] > 255);
 		V[x] += V[y];
 		break;
 		/* 8XY5	Subtract the value of VY from VX */
 		case 0x0005:
-		if (V[x] - V[y] < 0)
-			V[0xF] = 0;
-		else
-			V[0xF] = 1;
-
-		V[x] -= V[y];
+		V[0xF] = (V[x] > V[y]);
+		V[x]  -=  V[y];
 		break;
 		/* 8XY6	Store the value of VY shifted right one bit in VX */
 		case 0x0006:
+		V[0xf] = V[y] & 1;
 		V[x]   = V[y] >> 1;
-		V[0xf] = V[y] & 0x1;
 		break;
 		/* 8XY7	Set VX to the value of VY minus VX */
 		case 0x0007:
-		if (V[y] - V[x] < 0)
-			V[0xf] = 1;
-		else
-			V[0xf] = 0;
-
-		V[x] = V[y] - V[x];
+		V[0xf] = (V[y] > V[x]);
+		V[x]   =  V[y] - V[x];
 		break;
 		/* 8XYE	Store the value of VY shifted left one bit in VX */
 		case 0x000E:
-		V[x]   = V[y] << 1;
 		V[0xf] = V[y] & 0x80;
+		V[x]   = V[y] << 1;
 		break;
 	}
 }
 /* ------------------ */
 
-/* 9XY0	Skip next instruction if VX is not equal to VY */
+/* 9XY0	Skip next instruction if VX != VY */
 void opSkipNeVV () {
 	uint8_t x = (opcode & 0xf00) >> 8;
 	uint8_t y = (opcode & 0x0f0) >> 4;
 
 	if (V[x] != V[y])
-	pc += 2;
+		pc += 2;
 }
 
 /* ANNN Store memory address NNN in register I */
@@ -329,7 +321,8 @@ void opRand () {
 	uint8_t x = (opcode & 0x0f00) >> 8;
 	uint8_t n =  opcode & 0x00ff;
 
-	V[x] = n & (rand()) ;
+	srand(time(NULL));
+	V[x] = n & (rand() % 256) ;
 }
 
 /* DXYN Draw a sprite at position VX, VY with N bytes of sprite data starting at
