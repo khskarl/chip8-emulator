@@ -174,6 +174,7 @@ void op0 ()
 			case 0x00e0:
 			for (uint8_t& pixel : display)
 				pixel = 0;
+			drawFlag = 1;
 			break;
 			/* 00EE	Return from a subroutine */
 			case 0x00ee:
@@ -321,7 +322,6 @@ void opRand () {
 	uint8_t x = (opcode & 0x0f00) >> 8;
 	uint8_t n =  opcode & 0x00ff;
 
-	srand(time(NULL));
 	V[x] = n & (rand() % 256) ;
 }
 
