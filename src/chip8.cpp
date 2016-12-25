@@ -6,7 +6,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>  // rand()
-
+#include "disassembler.hpp"
 /* Memory map
 	0x000-0x1FF - Chip 8 interpreter (contains font set in emu)
 	0x050-0x0A0 - Used for the built in 4x5 pixel font set (0-F)
@@ -152,9 +152,9 @@ void (*opTable[16]) () = {
 
 void ExecuteOpcode () {
 	uint8_t hiByte = (opcode & 0xff00) >> 8;
-	uint8_t loByte =  opcode & 0x00ff;
 
-	printf("\n%04x %02x %02x ", pc - 2, hiByte, loByte);
+	printf("\n%04x ", pc - 2);
+	DisassembleInstruction(opcode);
 	opTable[hiByte >> 4]();
 }
 
@@ -321,8 +321,7 @@ void opJumpV () {
 void opRand () {
 	uint8_t x = (opcode & 0x0f00) >> 8;
 	uint8_t n =  opcode & 0x00ff;
-
-	V[x] = n & (rand() % 256) ;
+	V[x] = n & (rand() % 255) ;
 }
 
 /* DXYN Draw a sprite at position VX, VY with N bytes of sprite data starting at
@@ -395,7 +394,7 @@ void opF () {
 		break;
 		/* FX29	Set I to the memadd of the sprite corresponding to the hex digit in VX */
 		case 0x0029:
-		I = V[x];
+		I = V[x] * 5;
 		break;
 		/* FX33	*/
 		case 0x0033:
