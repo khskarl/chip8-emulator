@@ -70,22 +70,22 @@ void Context::DestroyContext () {
 
 void Context::UpdateKeypad () {
 	const uint8_t *keys = SDL_GetKeyboardState(NULL);
-	keypad[0] = keys[SDL_SCANCODE_1];
-	keypad[1] = keys[SDL_SCANCODE_2];
-	keypad[2] = keys[SDL_SCANCODE_3];
-	keypad[3] = keys[SDL_SCANCODE_4];
-	keypad[4] = keys[SDL_SCANCODE_Q];
-	keypad[5] = keys[SDL_SCANCODE_W];
-	keypad[6] = keys[SDL_SCANCODE_E];
-	keypad[7] = keys[SDL_SCANCODE_R];
-	keypad[8] = keys[SDL_SCANCODE_A];
-	keypad[9] = keys[SDL_SCANCODE_S];
-	keypad[10] = keys[SDL_SCANCODE_D];
-	keypad[11] = keys[SDL_SCANCODE_F];
-	keypad[12] = keys[SDL_SCANCODE_Z];
-	keypad[13] = keys[SDL_SCANCODE_X];
-	keypad[14] = keys[SDL_SCANCODE_C];
-	keypad[15] = keys[SDL_SCANCODE_V];
+	keypad[0x1] = keys[SDL_SCANCODE_1];
+	keypad[0x2] = keys[SDL_SCANCODE_2];
+	keypad[0x3] = keys[SDL_SCANCODE_3];
+	keypad[0xC] = keys[SDL_SCANCODE_4];
+	keypad[0x4] = keys[SDL_SCANCODE_Q];
+	keypad[0x5] = keys[SDL_SCANCODE_W];
+	keypad[0x6] = keys[SDL_SCANCODE_E];
+	keypad[0xD] = keys[SDL_SCANCODE_R];
+	keypad[0x7] = keys[SDL_SCANCODE_A];
+	keypad[0x8] = keys[SDL_SCANCODE_S];
+	keypad[0x9] = keys[SDL_SCANCODE_D];
+	keypad[0xE] = keys[SDL_SCANCODE_F];
+	keypad[0xA] = keys[SDL_SCANCODE_Z];
+	keypad[0x0] = keys[SDL_SCANCODE_X];
+	keypad[0xB] = keys[SDL_SCANCODE_C];
+	keypad[0xF] = keys[SDL_SCANCODE_V];
 }
 
 void Context::HandleEvents () {
