@@ -15,9 +15,6 @@ To run the program, type the name of the executable followed by a rom's name, th
 $ ./build/chip8.out pong
 ```
 
-## Todo
-
-
 ## Known bugs
 
-- In *invaders*, when an invader gets hit, other invaders disappear
+-   In *invaders*, when an invader gets hit, other invaders disappear
